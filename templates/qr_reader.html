@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Reader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Inter', Arial, sans-serif; background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%); margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { background: rgba(255,255,255,0.92); border-radius: 18px; max-width: 420px; width: 100%; margin: 40px auto; box-shadow: 0 8px 32px rgba(60,60,120,0.10), 0 1.5px 4px rgba(0,0,0,0.04); padding: 32px 24px; }
+        h1 { text-align: center; color: #22223b; margin-bottom: 18px; }
+        #reader { margin: 0 auto 18px auto; }
+        .result { background: #f1f5f9; color: #22223b; border-radius: 8px; padding: 12px; margin: 12px 0; word-break: break-all; text-align: center; font-size: 1.05rem; }
+        .btn { background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%); color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; margin: 8px 0; box-shadow: 0 2px 8px rgba(99,102,241,0.08); transition: background 0.2s, transform 0.1s; }
+        .btn:hover { background: linear-gradient(90deg, #4f46e5 0%, #0ea5e9 100%); transform: translateY(-2px) scale(1.03); }
+        .upload-label { display: block; margin: 12px 0 4px 0; color: #4b5563; font-size: 1rem; }
+        .back-link { display: inline-block; margin: 18px 0 0 0; color: #6366f1; text-decoration: none; font-weight: 600; font-size: 1.05rem; border-radius: 6px; padding: 8px 18px; background: #f1f5f9; transition: background 0.2s, color 0.2s; }
+        .back-link:hover { background: #6366f1; color: #fff; }
+        #reader { width: 100%; max-width: 340px; }
+        @media (max-width: 600px) { .container { padding: 10px 1vw; } #reader { max-width: 98vw; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Reader</h1>
+        <div id="reader"></div>
+        <button class="btn" onclick="startCamera()">Start Camera Scan</button>
+        <button class="btn" onclick="stopCamera()">Stop Camera</button>
+        <label class="upload-label" for="file-input">Or upload a QR code image:</label>
+        <input type="file" id="file-input" accept="image/*">
+        <div id="result" class="result" style="display:none;"></div>
+        <a class="back-link" href="{{ url_for('index') }}">&larr; Back to Generator</a>
+    </div>
+    <script>
+        let html5QrCode;
+        let cameraRunning = false;
+        function startCamera() {
+            if (cameraRunning) return;
+            html5QrCode = new Html5Qrcode("reader");
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length) {
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: 220 },
+                        qrCodeMessage => { showResult(qrCodeMessage); stopCamera(); },
+                        errorMessage => { /* ignore errors */ }
+                    );
+                    cameraRunning = true;
+                } else {
+                    alert("No camera found on this device.");
+                }
+            }).catch(err => { alert("Camera error: " + err); });
+        }
+        function stopCamera() {
+            if (html5QrCode && cameraRunning) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                    cameraRunning = false;
+                });
+            }
+        }
+        function showResult(msg) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = msg;
+        }
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function() {
+                Html5Qrcode.getCameras().then(() => {
+                    Html5Qrcode.scanFile(file, true)
+                        .then(decodedText => { showResult(decodedText); })
+                        .catch(err => { showResult('No QR code found in image.'); });
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html> 

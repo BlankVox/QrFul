@@ -1,0 +1,245 @@
+<body data-theme="light">
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="{{ url_for('index') }}" class="nav-logo">🔗 QR Manager</a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('history') }}">History</a>
+            <a href="{{ url_for('reader') }}">Reader</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    <style>
+    .navbar {
+        width: 100vw;
+        background: rgba(255,255,255,0.85);
+        box-shadow: 0 2px 12px #6366f111;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 2vw;
+        min-height: 56px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+    }
+    .nav-logo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+        letter-spacing: 0.5px;
+    }
+    .nav-links {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+    }
+    .nav-links a {
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover {
+        background: var(--primary);
+        color: #fff;
+    }
+    @media (max-width: 600px) {
+        .navbar { flex-direction: column; align-items: flex-start; padding: 0 1vw; }
+        .nav-links { flex-wrap: wrap; gap: 10px; }
+    }
+    .container { margin-top: 80px; } /* push content below navbar */
+    .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--container-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #fff;
+        box-shadow: 0 2px 8px var(--primary)33;
+        border: 2.5px solid #fff;
+        margin-right: 8px;
+        transition: background 0.3s;
+    }
+    .logo svg { display: block; }
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
+    .ripple:after {
+        content: '';
+        display: block;
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        width: 100px;
+        height: 100px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: rgba(99,102,241,0.18);
+        transition: transform 0.4s, opacity 0.8s;
+        opacity: 0;
+    }
+    .ripple:active:after {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+        transition: 0s;
+    }
+    .qr-img {
+        transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .qr-img:hover {
+        box-shadow: 0 8px 32px var(--primary)33, 0 2px 8px #0002;
+        transform: translateY(-6px) scale(1.04);
+    }
+    .container {
+        animation: cardin 1.1s cubic-bezier(.39,.575,.56,1.000);
+    }
+    @keyframes cardin {
+        from { opacity: 0; transform: translateY(40px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .share-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+    .share-btn {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.98rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 4px var(--primary)11;
+        transition: background 0.2s, transform 0.1s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .share-btn:hover {
+        background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+        transform: translateY(-2px) scale(1.04);
+    }
+    </style>
+    <div class="palette-row">
+        <div class="palette-swatch selected" id="palette-blue" style="background:linear-gradient(120deg,#a1c4fd,#6366f1);" onclick="setPalette('blue')"></div>
+        <div class="palette-swatch" id="palette-green" style="background:linear-gradient(120deg,#d4fc79,#22c55e);" onclick="setPalette('green')"></div>
+        <div class="palette-swatch" id="palette-purple" style="background:linear-gradient(120deg,#fbc2eb,#a21caf);" onclick="setPalette('purple')"></div>
+        <div class="palette-swatch" id="palette-orange" style="background:linear-gradient(120deg,#fbc2eb,#f59e42);" onclick="setPalette('orange')"></div>
+        <div class="palette-swatch" id="palette-red" style="background:linear-gradient(120deg,#f43f5e,#f87171);" onclick="setPalette('red')"></div>
+        <div class="palette-swatch" id="palette-teal" style="background:linear-gradient(120deg,#5eead4,#0ea5e9);" onclick="setPalette('teal')"></div>
+        <div class="palette-swatch" id="palette-gray" style="background:linear-gradient(120deg,#e5e7eb,#64748b);" onclick="setPalette('gray')"></div>
+    </div>
+    <div class="share-row">
+        <button class="share-btn ripple" onclick="copyShare()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+        <a class="share-btn ripple" href="#" id="emailShare" target="_blank"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a class="share-btn ripple" href="#" id="waShare" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        <a class="share-btn ripple" href="#" id="twShare" target="_blank"><i class="fa-brands fa-twitter"></i> Twitter</a>
+        <a class="share-btn ripple" href="#" id="fbShare" target="_blank"><i class="fa-brands fa-facebook"></i> Facebook</a>
+        <a class="share-btn ripple" href="#" id="tgShare" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+        <a class="share-btn ripple" href="#" id="msgrShare" target="_blank"><i class="fa-brands fa-facebook-messenger"></i> Messenger</a>
+        <button class="share-btn ripple" onclick="bluetoothShare()"><i class="fa-solid fa-share-nodes"></i> Bluetooth</button>
+    </div>
+    <!-- Jinja variables for sharing (must be in a separate script block for linter compatibility) -->
+    {% if file_link %}
+    <script>var shareUrl = '{{ file_link }}';</script>
+    {% elif qr_code_filename %}
+    <script>var shareUrl = window.location.origin + '{{ url_for('static', filename='qrcodes/' + qr_code_filename) }}';</script>
+    {% else %}
+    <script>var shareUrl = window.location.origin;</script>
+    {% endif %}
+    <script>var shareText = 'Check out this QR code!';</script>
+    <script>
+    function setPalette(palette) {
+        const root = document.documentElement;
+        if (palette === 'blue') {
+            root.style.setProperty('--primary', '#6366f1');
+            root.style.setProperty('--secondary', '#06b6d4');
+            root.style.setProperty('--accent', '#f43f5e');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%)');
+        } else if (palette === 'green') {
+            root.style.setProperty('--primary', '#22c55e');
+            root.style.setProperty('--secondary', '#14b8a6');
+            root.style.setProperty('--accent', '#f59e42');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)');
+        } else if (palette === 'purple') {
+            root.style.setProperty('--primary', '#a21caf');
+            root.style.setProperty('--secondary', '#6366f1');
+            root.style.setProperty('--accent', '#f43f5e');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%)');
+        } else if (palette === 'orange') {
+            root.style.setProperty('--primary', '#f59e42');
+            root.style.setProperty('--secondary', '#fbbf24');
+            root.style.setProperty('--accent', '#f43f5e');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #fbc2eb 0%, #f59e42 100%)');
+        } else if (palette === 'red') {
+            root.style.setProperty('--primary', '#f43f5e');
+            root.style.setProperty('--secondary', '#f87171');
+            root.style.setProperty('--accent', '#6366f1');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #f43f5e 0%, #f87171 100%)');
+        } else if (palette === 'teal') {
+            root.style.setProperty('--primary', '#0ea5e9');
+            root.style.setProperty('--secondary', '#5eead4');
+            root.style.setProperty('--accent', '#6366f1');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #5eead4 0%, #0ea5e9 100%)');
+        } else if (palette === 'gray') {
+            root.style.setProperty('--primary', '#64748b');
+            root.style.setProperty('--secondary', '#e5e7eb');
+            root.style.setProperty('--accent', '#6366f1');
+            root.style.setProperty('--bg-gradient', 'linear-gradient(120deg, #e5e7eb 0%, #64748b 100%)');
+        }
+        localStorage.setItem('palette', palette);
+        document.querySelectorAll('.palette-swatch').forEach(el => el.classList.remove('selected'));
+        document.getElementById('palette-' + palette).classList.add('selected');
+    }
+    </script>
+    <script>
+    function copyShare() {
+        navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard!');
+    }
+    function bluetoothShare() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'QR Code',
+                text: shareText,
+                url: shareUrl
+            });
+        } else {
+            alert('Bluetooth/Web Share API not supported on this device/browser.');
+        }
+    }
+    window.onload = function() {
+        setThemeFromStorage();
+        setPaletteFromStorage();
+        // Set up sharing links
+        document.getElementById('emailShare').href = 'mailto:?subject=QR Code&body=' + encodeURIComponent(shareText + '\n' + shareUrl);
+        document.getElementById('waShare').href = 'https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl);
+        document.getElementById('twShare').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText + ' ' + shareUrl);
+        document.getElementById('fbShare').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
+        document.getElementById('tgShare').href = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareText);
+        document.getElementById('msgrShare').href = 'fb-messenger://share/?link=' + encodeURIComponent(shareUrl);
+    }
+    </script>
+</body> 
