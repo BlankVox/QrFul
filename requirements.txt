@@ -1,0 +1,8 @@
+flask
+flask-login
+flask-mail
+flask-wtf
+flask-sqlalchemy
+qrcode
+pillow
+python-dotenv 
