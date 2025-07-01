@@ -55,13 +55,3 @@ QrFul is built with love, curiosity, and late-night inspiration.
 Feel free to fork, contribute, and drop a ⭐ if you find it helpful.
 
 **License:** MIT
-
----
-
-Let me know if you want:  
-- A dark mode screenshot section  
-- Contribution guide  
-- Notion roadmap or progress tracker  
-- API documentation
-
-Happy hacking 💻
