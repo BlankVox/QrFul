@@ -51,7 +51,7 @@ Start simple. Focus on `app.py`, build modularly, and test as you go. Use meanin
 
 ❤️ **Credits & License**
 
-QrFul is built with love, curiosity, and late-night inspiration.  
+QrFul is built with curiosity and late-night inspiration.  
 Feel free to fork, contribute, and drop a ⭐ if you find it helpful.
 
 **License:** MIT
