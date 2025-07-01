@@ -1,4 +1,4 @@
-# 🌈 QrFul — The QR Code Toolkit
+#  QrFul — The QR Code Toolkit
 
 A sleek and modern web app to **generate**, **manage**, and **share** QR codes with power-user features — all in one beautifully crafted interface.
 
@@ -8,20 +8,20 @@ A sleek and modern web app to **generate**, **manage**, and **share** QR codes w
 
 ---
 
-## 🚀 Features (Planned)
+##  Features (Planned)
 
 > Your all-in-one QR power panel
 
-- 🎨 Generate QR codes for text, URLs, files (with themes, colors, dark mode)
-- 🧠 User/session-based QR history
-- 🔐 User authentication (sign up/login)
-- 📷 QR scanner via webcam and image upload
-- 📤 Share via email, WhatsApp, social media
-- 👁️ Preview before download
-- 🛡️ File protection: expiration, password, virus scan, file size/type limits
-- 📊 Analytics: scan/download tracking, admin panel, email alerts
-- 📱 PWA support: installable, offline mode
-- 💥 Custom fun features: shapes, templates, animations, sounds
+-  Generate QR codes for text, URLs, files (with themes, colors, dark mode)
+-  User/session-based QR history
+-  User authentication (sign up/login)
+-  QR scanner via webcam and image upload
+-  Share via email, WhatsApp, social media
+-  Preview before download
+-  File protection: expiration, password, virus scan, file size/type limits
+-  Analytics: scan/download tracking, admin panel, email alerts
+-  PWA support: installable, offline mode
+-  Custom fun features: shapes, templates, animations, sounds
 
 ---
 
@@ -43,7 +43,7 @@ A sleek and modern web app to **generate**, **manage**, and **share** QR codes w
 
 ---
 
-# 🧠 Developer Tip
+#  Developer Tip
 
 Start simple. Focus on `app.py`, build modularly, and test as you go. Use meaningful commits and comment your code clearly.
 
@@ -64,4 +64,4 @@ Let me know if you want:
 - Notion roadmap or progress tracker  
 - API documentation
 
-Happy hacking 🧠💻
+Happy hacking 💻
