@@ -29,7 +29,7 @@ A sleek and modern web app to **generate**, **manage**, and **share** QR codes w
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/QrFul.git
+   git clone https://github.com/BlankVox/QrFul.git
    cd QrFul
 2. Install dependencies:
    ```bash
